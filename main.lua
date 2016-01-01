@@ -3,6 +3,8 @@ GameState = require "states/game"
 WIDTH = 640
 HEIGHT = 480
 
+math.randomseed(os.time())
+
 function love.load()
   currentState = GameState:new(WIDTH, HEIGHT)
   love.window.setMode(WIDTH, HEIGHT)
