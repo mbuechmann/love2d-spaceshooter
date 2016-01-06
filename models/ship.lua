@@ -28,10 +28,6 @@ function Ship:polygon()
   return Geometry.transform(COORDS, self.rot, self.x, self.y)
 end
 
-function Ship:draw()
-  love.graphics.polygon("line", self:polygon())
-end
-
 function Ship:update(dt)
   if self.accelerating then
     self.vx = self.vx - math.sin(self.rot) * dt * ACCELRATION
