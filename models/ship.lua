@@ -5,6 +5,10 @@ local ACCELRATION = 5
 local ROTATION_SPEED = math.pi
 local MAX_SPEED = 4
 
+local engineSound = love.sound.newSoundData("assets/sounds/Engines.mp3")
+local engineSource = love.audio.newSource(engineSound)
+engineSource:setLooping(true)
+
 local Ship = {}
 
 function Ship:new(w, h)
@@ -53,6 +57,11 @@ end
 
 function Ship:thrust(on)
   self.accelerating = on
+  if on then
+    engineSource:play()
+  else
+    engineSource:stop()
+  end
 end
 
 function Ship:left(on)
