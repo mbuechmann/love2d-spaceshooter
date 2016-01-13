@@ -1,8 +1,10 @@
+local laserSound = love.sound.newSoundData("assets/sounds/Lazer.mp3")
+
 local Gemoetry = require("../utils/geometry")
 
 local Bullet = {}
 
-local SPEED = 4.5
+local SPEED = 6
 local TTL = 3
 
 function Bullet:new(w, h, x, y, rot)
@@ -16,6 +18,8 @@ function Bullet:new(w, h, x, y, rot)
   bullet.vy = v[2]
   bullet.age = 0
   setmetatable(bullet, {__index = self})
+  local laserSource = love.audio.newSource(laserSound)
+  laserSource:play()
   return bullet
 end
 
