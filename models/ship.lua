@@ -42,7 +42,7 @@ function Ship:update(dt)
   if self.steeringLeft  then vrot = vrot + ROTATION_SPEED end
   if self.steeringRight then vrot = vrot - ROTATION_SPEED end
 
-  self.rot = self.rot + vrot * dt
+  self.rot = (self.rot + vrot * dt) % (math.pi * 2)
 
   local v = math.sqrt(self.vx * self.vx + self.vy * self.vy)
   if v > MAX_SPEED then
