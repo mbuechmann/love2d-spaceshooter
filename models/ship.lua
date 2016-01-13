@@ -32,6 +32,11 @@ function Ship:polygon()
   return Geometry.transform(COORDS, self.rot, self.x, self.y)
 end
 
+function Ship:tip()
+  local polygon = self:polygon()
+  return polygon[1], polygon[2]
+end
+
 function Ship:update(dt)
   if self.accelerating then
     self.vx = self.vx - math.sin(self.rot) * dt * ACCELRATION
