@@ -65,7 +65,7 @@ function Ship:thrust(on)
   if on then
     engineSource:play()
   else
-    engineSource:stop()
+    engineSource:setLooping(false)
   end
 end
 
