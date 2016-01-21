@@ -1,3 +1,7 @@
+local HC = require "HC"
+local Polygon  = require "HC.polygon"
+local shapes = require "HC.shapes"
+
 local SHAPES = {
   {
     {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5}
@@ -13,7 +17,7 @@ local SHAPES = {
     {-18, 0, -15, 10, -3, 12, 0, 20, 7, 16, 15, 14, 20, 0, 18, -3, 15, -10, 8, -12, 0, -15, -2, -12, -12, -10}
   }
 }
-local V = 3
+local V = 200
 local MAX_VROT = 0.1
 
 local Asteroid = {}
@@ -30,24 +34,36 @@ function Asteroid:new(w, h, size, x, y)
   asteroid.vx   = math.cos(a) * V
   asteroid.vy   = math.sin(a) * V
   asteroid.size = size or 3
-  asteroid.x    = math.random() * w
-  asteroid.y    = math.random() * h
-  asteroid.rot  = math.random() * math.pi * 2
   asteroid.vrot = (math.random() * MAX_VROT * 2) - MAX_VROT
 
-  local shapes = SHAPES[asteroid.size]
-  asteroid.shape = shapes[math.random(#shapes)]
+  local rand = math.random(#SHAPES[asteroid.size])
+  local shape = SHAPES[asteroid.size][rand]
+  asteroid.shape = shapes.newPolygonShape(unpack(shape))
+  asteroid.shape:move(x or math.random() * w, y or math.random() * h)
 
   return asteroid
 end
 
 function Asteroid:update(dt)
-  self.x = self.x + self.vx
-  self.y = self.y + self.vy
-  self.rot = (self.rot + self.vrot) % (math.pi * 2)
+  self.shape:move(self.vx * dt, self.vy * dt)
+  self.shape:rotate(self.vrot)
+  x, y = self.shape:center()
+  if x < 0 then
+    self.shape:move(self.w, 0)
+  end
+  if x > self.w then
+    self.shape:move(-self.w, 0)
+  end
+  if y < 0 then
+    self.shape:move(0, self.h)
+  end
+  if y > self.h then
+    self.shape:move(0, -self.h)
+  end
+end
 
-  self.x = self.x % self.w
-  self.y = self.y % self.h
+function Asteroid:draw()
+  self.shape:draw("line")
 end
 
 return Asteroid

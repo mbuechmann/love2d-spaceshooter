@@ -1,6 +1,9 @@
-local Geometry = require "../utils/geometry"
+local HC = require "HC"
+local Polygon  = require "HC.polygon"
+local shapes = require "HC.shapes"
 
 local COORDS = { 0, -10, 5, 5, 0, 0, -5, 5 }
+local THRUSTER = {-3, 2, 0, 0, 3, 2, 0, 7}
 local ACCELRATION = 5
 local ROTATION_SPEED = math.pi
 local MAX_SPEED = 4
@@ -15,26 +18,29 @@ function Ship:new(w, h)
   local ship = {}
   setmetatable(ship, {__index = self})
 
-  ship.x = w / 2 or 100
-  ship.y = h / 2 or 450
-  ship.vx = 0
-  ship.vy = 0
   ship.area = {width = w, height = h}
   ship.accelerating = false
   ship.steeringLeft = false
   ship.steeringRight = false
+
+  ship.vx = 0
+  ship.vy = 0
   ship.rot = 0
+
+  ship.shape = shapes.newPolygonShape(unpack(COORDS))
+  ship.thruster = Polygon(unpack(THRUSTER))
+  local x = w / 2 or 100
+  local y = h / 2 or 450
+  ship.shape:move(x, y)
+  ship.thruster:move(x, y)
 
   return ship
 end
 
-function Ship:polygon()
-  return Geometry.transform(COORDS, self.rot, self.x, self.y)
-end
-
 function Ship:tip()
-  local polygon = self:polygon()
-  return polygon[1], polygon[2]
+  -- TODO: Don't use underscored fields
+  local _, _, x, y = self.shape._polygon:unpack()
+  return x, y
 end
 
 function Ship:update(dt)
@@ -42,11 +48,16 @@ function Ship:update(dt)
     self.vx = self.vx - math.sin(self.rot) * dt * ACCELRATION
     self.vy = self.vy - math.cos(self.rot) * dt * ACCELRATION
   end
+  self.shape:move(self.vx, self.vy)
+  self.thruster:move(self.vx, self.vy)
 
   local vrot = 0
   if self.steeringLeft  then vrot = vrot + ROTATION_SPEED end
   if self.steeringRight then vrot = vrot - ROTATION_SPEED end
 
+  local dRot = vrot * dt
+  self.shape:rotate(-dRot)
+  self.thruster:rotate(-dRot, self.shape:center())
   self.rot = (self.rot + vrot * dt) % (math.pi * 2)
 
   local v = math.sqrt(self.vx * self.vx + self.vy * self.vy)
@@ -56,8 +67,30 @@ function Ship:update(dt)
     self.vy = self.vy * factor
   end
 
-  self.x = (self.x + self.vx) % self.area.width
-  self.y = (self.y + self.vy) % self.area.height
+  x, y = self.shape:center()
+  if x < 0 then
+    self.shape:move(self.area.width, 0)
+    self.thruster:move(self.area.width, 0)
+  end
+  if x > self.area.width then
+    self.shape:move(-self.area.width, 0)
+    self.thruster:move(-self.area.width, 0)
+  end
+  if y < 0 then
+    self.shape:move(0, self.area.height)
+    self.thruster:move(0, self.area.height)
+  end
+  if y > self.area.height then
+    self.shape:move(0, -self.area.height)
+    self.thruster:move(0, -self.area.height)
+  end
+end
+
+function Ship:draw()
+  if self.accelerating then
+    love.graphics.polygon('line', self.thruster:unpack())
+  end
+  self.shape:draw("line")
 end
 
 function Ship:thrust(on)

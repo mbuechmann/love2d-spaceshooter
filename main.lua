@@ -6,6 +6,7 @@ HEIGHT = 480
 math.randomseed(os.time())
 
 function love.load()
+  love.graphics.setLineWidth(1.5)
   currentState = GameState:new(WIDTH, HEIGHT)
   love.window.setMode(WIDTH, HEIGHT)
 end

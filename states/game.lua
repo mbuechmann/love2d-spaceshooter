@@ -1,9 +1,6 @@
 local Ship = require "../models/ship"
 local Bullet = require "../models/bullet"
 local Asteroid = require "../models/asteroid"
-local ShipRenderer = require "../renderers/ship_renderer"
-local BulletRenderer = require "../renderers/bullet_renderer"
-local AsteroidRenderer = require "../renderers/asteroid_renderer"
 
 local Game = {}
 
@@ -23,28 +20,40 @@ function Game:new(w, h)
 end
 
 function Game:draw()
-  ShipRenderer.render(self.ship)
+  self.ship:draw()
   for _, asteroid in ipairs(self.asteroids) do
-    AsteroidRenderer.render(asteroid)
+    asteroid:draw()
   end
   for _, bullet in ipairs(self.bullets) do
-    BulletRenderer.render(bullet)
+    bullet:draw()
   end
 end
 
-function Game:update(dt)
-  self.ship:update(dt)
-  for _, asteroid in ipairs(self.asteroids) do
+local function updateAsteroids(asteroids, dt)
+  for _, asteroid in ipairs(asteroids) do
     asteroid:update(dt)
   end
-  for i = #self.bullets, 1, -1 do
-    local bullet = self.bullets[i]
+end
+
+local function updateBullets(bullets, dt)
+  for i = #bullets, 1, -1 do
+    local bullet = bullets[i]
     if bullet:isExpired() then
-      table.remove(self.bullets, i)
+      table.remove(bullets, i)
     else
       bullet:update(dt)
     end
   end
+end
+
+local function processCollisions(asteroids, bullets, ship, dt)
+end
+
+function Game:update(dt)
+  self.ship:update(dt)
+  updateAsteroids(self.asteroids, dt)
+  updateBullets(self.bullets, dt)
+  processCollisions(self.asteroids, self.bullets, self.ship, dt)
 end
 
 function Game:keypressed(key)
