@@ -28,7 +28,7 @@ function Ship:new(w, h)
   ship.rot = 0
 
   ship.shape = shapes.newPolygonShape(unpack(COORDS))
-  ship.thruster = Polygon(unpack(THRUSTER))
+  ship.thruster = shapes.newPolygonShape(unpack(THRUSTER))
   local x = w / 2 or 100
   local y = h / 2 or 450
   ship.shape:move(x, y)
@@ -56,7 +56,7 @@ function Ship:update(dt)
   if self.steeringRight then vrot = vrot - ROTATION_SPEED end
 
   local dRot = vrot * dt
-  self.shape:rotate(-dRot)
+  self.shape:setRotation(-self.rot)
   self.thruster:rotate(-dRot, self.shape:center())
   self.rot = (self.rot + vrot * dt) % (math.pi * 2)
 
@@ -88,7 +88,7 @@ end
 
 function Ship:draw()
   if self.accelerating then
-    love.graphics.polygon('line', self.thruster:unpack())
+    self.thruster:draw("line")
   end
   self.shape:draw("line")
 end
