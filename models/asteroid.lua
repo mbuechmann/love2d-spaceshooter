@@ -25,6 +25,8 @@ local MAX_VROT = 0.1
 
 local Asteroid = {}
 
+local dieSound = love.sound.newSoundData("assets/sounds/Die 2.mp3")
+
 function Asteroid:new(w, h, size, x, y)
   local asteroid = {}
 
@@ -70,6 +72,9 @@ function Asteroid:draw()
 end
 
 function Asteroid:spawn()
+  local dieSource = love.audio.newSource(dieSound)
+  dieSource:play()
+
   if self.size == 0 then
     return {}
   end
