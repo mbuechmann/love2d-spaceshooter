@@ -47,6 +47,19 @@ local function updateBullets(bullets, dt)
 end
 
 local function processCollisions(asteroids, bullets, ship, dt)
+  for i = #bullets, 1, -1 do
+    local bullet = bullets[i]
+    for j = #asteroids, 1, -1 do
+      local asteroid = asteroids[j]
+      if asteroid.shape:contains(bullet.x, bullet.y) then
+        for _, a in pairs(asteroid:spawn()) do
+          table.insert(asteroids, a)
+        end
+        table.remove(bullets, i)
+        table.remove(asteroids, j)
+      end
+    end
+  end
 end
 
 function Game:update(dt)

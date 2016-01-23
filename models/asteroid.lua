@@ -15,6 +15,9 @@ local SHAPES = {
     {-9, 0, -15, 5, -13, 9, -5, 15, 0, 11, 5, 14, 10, 10, 15, -2, 5, -15, -12, -14, -15, -5},
     {-14, 5, -6, 14, -1, 10, 1, 13, 5, 10, 10, 10, 14, -3, 7, -8, 0, -11, -4, -13, -12, -12, -10, -3},
     {-18, 0, -15, 10, -3, 12, 0, 20, 7, 16, 15, 14, 20, 0, 18, -3, 15, -10, 8, -12, 0, -15, -2, -12, -12, -10}
+  },
+  {
+    {-18, 0, -15, 10, -3, 12, 0, 20, 7, 16, 15, 14, 20, 0, 18, -3, 15, -10, 8, -12, 0, -15, -2, -12, -12, -10}
   }
 }
 local V = 200
@@ -33,7 +36,7 @@ function Asteroid:new(w, h, size, x, y)
   local a = math.random() * 2 * math.pi
   asteroid.vx   = math.cos(a) * V
   asteroid.vy   = math.sin(a) * V
-  asteroid.size = size or 3
+  asteroid.size = size or #SHAPES
   asteroid.vrot = (math.random() * MAX_VROT * 2) - MAX_VROT
 
   local rand = math.random(#SHAPES[asteroid.size])
@@ -64,6 +67,18 @@ end
 
 function Asteroid:draw()
   self.shape:draw("line")
+end
+
+function Asteroid:spawn()
+  if self.size == 0 then
+    return {}
+  end
+
+  local x, y = self.shape:center()
+  return {
+    Asteroid:new(self.w, self.h, self.size - 1, x, y),
+    Asteroid:new(self.w, self.h, self.size - 1, x, y)
+  }
 end
 
 return Asteroid
