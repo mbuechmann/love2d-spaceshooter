@@ -4,9 +4,6 @@ local shapes = require "HC.shapes"
 
 local SHAPES = {
   {
-    {-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5}
-  },
-  {
     {-10, 0, -5, 1, -3, 8, 5, 8, 8, -2, 1, -10, -6, -9},
     {-10, 8, -7, 10, 5, 5, 9, 1, 3, -8, -5, -5, -7, 4},
     {-6, 0, -8, 4, -3, 8, 0, 5, 4, 6, 6, 2, 4, -1, 2, -8, -5, -7}
@@ -75,7 +72,7 @@ function Asteroid:spawn()
   local dieSource = love.audio.newSource(dieSound)
   dieSource:play()
 
-  if self.size == 0 then
+  if self.size == 1 then
     return {}
   end
 
