@@ -2,6 +2,8 @@ local HC = require "HC"
 local Polygon  = require "HC.polygon"
 local shapes = require "HC.shapes"
 
+local Debris = require "models/debris"
+
 local SHAPES = {
   {
     {-10, 0, -5, 1, -3, 8, 5, 8, 8, -2, 1, -10, -6, -9},
@@ -26,7 +28,6 @@ local dieSound = love.sound.newSoundData("assets/sounds/Die 2.mp3")
 
 function Asteroid:new(w, h, size, x, y)
   local asteroid = {}
-
   setmetatable(asteroid, {__index = self})
 
   asteroid.w = w
@@ -73,13 +74,15 @@ function Asteroid:spawn()
   dieSource:play()
 
   if self.size == 1 then
-    return {}
+    return {}, {}
   end
 
   local x, y = self.shape:center()
   return {
     Asteroid:new(self.w, self.h, self.size - 1, x, y),
     Asteroid:new(self.w, self.h, self.size - 1, x, y)
+  }, {
+    Debris:new(self.w, self.h, x, y)
   }
 end
 

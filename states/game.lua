@@ -12,6 +12,7 @@ function Game:new(w, h)
   game.h = h
   game.ship = Ship:new(w, h)
   game.asteroids = {}
+  game.debris = {}
   game.bullets = {}
 
   game:initLevel(1)
@@ -26,6 +27,9 @@ function Game:draw()
   end
   for _, bullet in ipairs(self.bullets) do
     bullet:draw()
+  end
+  for _, debris in ipairs(self.debris) do
+    debris:draw()
   end
 end
 
@@ -46,14 +50,24 @@ local function updateBullets(bullets, dt)
   end
 end
 
-local function processCollisions(asteroids, bullets, ship, dt)
+local function updateDebris(debris, dt)
+  for _, d in pairs(debris) do
+    d:update(dt)
+  end
+end
+
+local function processCollisions(asteroids, bullets, debris, ship, dt)
   for i = #bullets, 1, -1 do
     local bullet = bullets[i]
     for j = #asteroids, 1, -1 do
       local asteroid = asteroids[j]
       if asteroid.shape:contains(bullet.x, bullet.y) then
-        for _, a in pairs(asteroid:spawn()) do
+        local newAsteroids, newDebris = asteroid:spawn()
+        for _, a in pairs(newAsteroids) do
           table.insert(asteroids, a)
+        end
+        for _, d in pairs(newDebris) do
+          table.insert(debris, d)
         end
         table.remove(bullets, i)
         table.remove(asteroids, j)
@@ -66,7 +80,8 @@ function Game:update(dt)
   self.ship:update(dt)
   updateAsteroids(self.asteroids, dt)
   updateBullets(self.bullets, dt)
-  processCollisions(self.asteroids, self.bullets, self.ship, dt)
+  updateDebris(self.debris, dt)
+  processCollisions(self.asteroids, self.bullets, self.debris, self.ship, dt)
 end
 
 function Game:keypressed(key)

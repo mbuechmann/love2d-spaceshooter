@@ -7,6 +7,8 @@ local TTL = 3
 
 function Bullet:new(w, h, x, y, rot)
   local bullet = {}
+  setmetatable(bullet, {__index = self})
+
   bullet.w = w
   bullet.h = h
   bullet.x = x
@@ -14,8 +16,6 @@ function Bullet:new(w, h, x, y, rot)
   bullet.vx = math.sin(rot) * -SPEED
   bullet.vy = math.cos(rot) * -SPEED
   bullet.age = 0
-
-  setmetatable(bullet, {__index = self})
 
   local laserSource = love.audio.newSource(laserSound)
   laserSource:play()
