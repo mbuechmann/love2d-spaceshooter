@@ -95,10 +95,9 @@ end
 
 function Ship:thrust(on)
   self.accelerating = on
+  engineSource:setLooping(on)
   if on then
     engineSource:play()
-  else
-    engineSource:setLooping(false)
   end
 end
 
