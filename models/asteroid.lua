@@ -73,17 +73,25 @@ function Asteroid:spawn()
   local dieSource = love.audio.newSource(dieSound)
   dieSource:play()
 
-  if self.size == 1 then
-    return {}, {}
+  local x, y = self.shape:center()
+
+  local asteroids = {}
+  if self.size > 1 then
+    asteroids = {
+      Asteroid:new(self.w, self.h, self.size - 1, x, y),
+      Asteroid:new(self.w, self.h, self.size - 1, x, y)
+    }
   end
 
-  local x, y = self.shape:center()
-  return {
-    Asteroid:new(self.w, self.h, self.size - 1, x, y),
-    Asteroid:new(self.w, self.h, self.size - 1, x, y)
-  }, {
+  local debris = {
+    Debris:new(self.w, self.h, x, y),
+    Debris:new(self.w, self.h, x, y),
+    Debris:new(self.w, self.h, x, y),
+    Debris:new(self.w, self.h, x, y),
     Debris:new(self.w, self.h, x, y)
   }
+
+  return asteroids, debris
 end
 
 return Asteroid

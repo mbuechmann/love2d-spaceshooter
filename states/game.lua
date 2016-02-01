@@ -51,8 +51,13 @@ local function updateBullets(bullets, dt)
 end
 
 local function updateDebris(debris, dt)
-  for _, d in pairs(debris) do
-    d:update(dt)
+  for i = #debris, 1, -1 do
+    local d = debris[i]
+    if d:isExpired() then
+      table.remove(debris, i)
+    else
+      d:update(dt)
+    end
   end
 end
 
