@@ -2,6 +2,9 @@ local Ship = require "../models/ship"
 local Bullet = require "../models/bullet"
 local Asteroid = require "../models/asteroid"
 
+local font = love.graphics.newFont("assets/fonts/Vectorb.ttf", 20)
+love.graphics.setFont(font)
+
 local Game = {}
 
 function Game:new(w, h)
@@ -31,6 +34,9 @@ function Game:draw()
   for _, debris in ipairs(self.debris) do
     debris:draw()
   end
+
+  local str = string.format("%02d", self.level)
+  love.graphics.printf(str, 0, 20, self.w, "center")
 end
 
 local function updateAsteroids(asteroids, dt)
