@@ -11,6 +11,7 @@ function Debris:new(w, h, x, y)
   debris.h = h
   debris.x = x
   debris.y = y
+  debris.ttl = TTL + math.random()
   debris.age = 0
 
   local rot = math.random() * 2 * math.pi
@@ -31,7 +32,7 @@ function Debris:draw()
 end
 
 function Debris:isExpired()
-  return self.age > TTL
+  return self.age > self.ttl
 end
 
 return Debris
