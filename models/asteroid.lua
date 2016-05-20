@@ -1,5 +1,3 @@
-local HC = require "HC"
-local Polygon  = require "HC.polygon"
 local shapes = require "HC.shapes"
 
 local Debris = require "models/debris"
@@ -50,7 +48,7 @@ end
 function Asteroid:update(dt)
   self.shape:move(self.vx * dt, self.vy * dt)
   self.shape:rotate(self.vrot)
-  x, y = self.shape:center()
+  local x, y = self.shape:center()
   if x < 0 then
     self.shape:move(self.w, 0)
   end

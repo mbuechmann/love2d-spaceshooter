@@ -1,7 +1,8 @@
-GameState = require "states/game"
+local GameState = require "states/game"
 
-WIDTH = 640
-HEIGHT = 480
+local WIDTH = 640
+local HEIGHT = 480
+local currentState
 
 math.randomseed(os.time())
 

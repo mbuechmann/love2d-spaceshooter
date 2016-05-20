@@ -67,7 +67,7 @@ local function updateDebris(debris, dt)
   end
 end
 
-function processCollisions(asteroids, bullets, debris, ship, dt)
+local function processCollisions(asteroids, bullets, debris)
   for i = #bullets, 1, -1 do
     local bullet = bullets[i]
     for j = #asteroids, 1, -1 do

@@ -1,5 +1,3 @@
-local HC = require "HC"
-local Polygon  = require "HC.polygon"
 local shapes = require "HC.shapes"
 
 local COORDS = { 0, -10, 5, 5, 0, 0, -5, 5 }
@@ -67,7 +65,7 @@ function Ship:update(dt)
     self.vy = self.vy * factor
   end
 
-  x, y = self.shape:center()
+  local x, y = self.shape:center()
   if x < 0 then
     self.shape:move(self.area.width, 0)
     self.thruster:move(self.area.width, 0)
