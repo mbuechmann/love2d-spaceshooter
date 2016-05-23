@@ -13,7 +13,7 @@ function Game:new(w, h)
 
   game.w = w
   game.h = h
-  game.ship = Ship:new(w, h)
+  game.ship = nil
   game.asteroids = {}
   game.debris = {}
   game.bullets = {}
@@ -24,7 +24,9 @@ function Game:new(w, h)
 end
 
 function Game:draw()
-  self.ship:draw()
+  if self.ship then
+    self.ship:draw()
+  end
   for _, asteroid in ipairs(self.asteroids) do
     asteroid:draw()
   end
@@ -67,46 +69,58 @@ local function updateDebris(debris, dt)
   end
 end
 
-local function processCollisions(asteroids, bullets, debris)
-  for i = #bullets, 1, -1 do
-    local bullet = bullets[i]
-    for j = #asteroids, 1, -1 do
-      local asteroid = asteroids[j]
+function Game:processCollisions()
+  for i = table.getn(self.asteroids), 1, -1 do
+    local asteroid = self.asteroids[i]
+    for j = table.getn(self.bullets), 1, -1 do
+      local bullet = self.bullets[j]
       if asteroid.shape:contains(bullet.x, bullet.y) then
         local newAsteroids, newDebris = asteroid:spawn()
         for _, a in pairs(newAsteroids) do
-          table.insert(asteroids, a)
+          table.insert(self.asteroids, a)
         end
         for _, d in pairs(newDebris) do
-          table.insert(debris, d)
+          table.insert(self.debris, d)
         end
-        table.remove(bullets, i)
-        table.remove(asteroids, j)
+        table.remove(self.bullets, j)
+        table.remove(self.asteroids, i)
       end
+    end
+
+    if self.ship and asteroid.shape:collidesWith(self.ship.shape) then
+      self.ship = nil
     end
   end
 end
 
 function Game:update(dt)
-  self.ship:update(dt)
+  if self.ship then
+    self.ship:update(dt)
+  end
   updateAsteroids(self.asteroids, dt)
   updateBullets(self.bullets, dt)
   updateDebris(self.debris, dt)
-  processCollisions(self.asteroids, self.bullets, self.debris, self.ship, dt)
+  self:processCollisions()
 end
 
 function Game:keypressed(key)
-  if key == "up" then
-    self.ship:thrust(true)
-  end
-  if key == "left" then
-    self.ship:left(true)
-  end
-  if key == "right" then
-    self.ship:right(true)
-  end
-  if key == "space" then
-    self:addBullet()
+  if self.ship then
+    if key == "up" then
+      self.ship:thrust(true)
+    end
+    if key == "left" then
+      self.ship:left(true)
+    end
+    if key == "right" then
+      self.ship:right(true)
+    end
+    if key == "space" then
+      self:addBullet()
+    end
+  else
+    if key == "space" then
+      self.ship = Ship:new(self.w, self.h)
+    end
   end
 end
 
@@ -116,14 +130,16 @@ function Game:addBullet()
 end
 
 function Game:keyreleased(key)
-  if key == "up" then
-    self.ship:thrust(false)
-  end
-  if key == "left" then
-    self.ship:left(false)
-  end
-  if key == "right" then
-    self.ship:right(false)
+  if self.ship then
+    if key == "up" then
+      self.ship:thrust(false)
+    end
+    if key == "left" then
+      self.ship:left(false)
+    end
+    if key == "right" then
+      self.ship:right(false)
+    end
   end
 end
 
