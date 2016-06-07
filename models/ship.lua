@@ -41,6 +41,10 @@ function Ship:tip()
   return x, y
 end
 
+function Ship:center()
+  return self.shape:center()
+end
+
 function Ship:update(dt)
   if self.accelerating then
     self.vx = self.vx - math.sin(self.rot) * dt * ACCELRATION

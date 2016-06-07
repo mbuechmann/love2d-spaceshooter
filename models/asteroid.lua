@@ -81,13 +81,7 @@ function Asteroid:spawn()
     }
   end
 
-  local debris = {
-    Debris:new(self.w, self.h, x, y),
-    Debris:new(self.w, self.h, x, y),
-    Debris:new(self.w, self.h, x, y),
-    Debris:new(self.w, self.h, x, y),
-    Debris:new(self.w, self.h, x, y)
-  }
+  local debris = Debris.create(5, self.w, self.h, x, y)
 
   return asteroids, debris
 end

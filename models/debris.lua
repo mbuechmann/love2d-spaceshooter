@@ -3,6 +3,16 @@ local TTL = 2
 
 local Debris = {}
 
+function Debris.create(size, w, h, x, y)
+  local debris = {}
+
+  for _ = 1, size do
+    table.insert(debris, Debris:new(w, h, x, y))
+  end
+
+  return debris
+end
+
 function Debris:new(w, h, x, y)
   local debris = {}
   setmetatable(debris, {__index = self})

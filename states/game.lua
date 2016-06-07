@@ -1,6 +1,7 @@
 local Ship = require "../models/ship"
 local Bullet = require "../models/bullet"
 local Asteroid = require "../models/asteroid"
+local Debris = require "../models/debris"
 
 local font = love.graphics.newFont("assets/fonts/Vectorb.ttf", 20)
 love.graphics.setFont(font)
@@ -88,6 +89,11 @@ function Game:processCollisions()
     end
 
     if self.ship and asteroid.shape:collidesWith(self.ship.shape) then
+      local x, y = self.ship:center()
+      local debris = Debris.create(10, self.w, self.h, x, y)
+      for _, d in pairs(debris) do
+        table.insert(self.debris, d)
+      end
       self.ship = nil
     end
   end
